@@ -19,6 +19,9 @@ pub fn main() {
   // Getting the database connection pool
   let assert Ok(db) = db.connect()
 
+  // Log information about the current incomming request
+  wisp.configure_logger()
+
   // Trying to start the webserver on given PORT
   let assert Ok(_) =
     wisp.mist_handler(

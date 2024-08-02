@@ -1,4 +1,3 @@
-import gleam/io
 import gleam/option
 import gleam/pgo
 import gleam/result
