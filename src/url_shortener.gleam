@@ -1,3 +1,4 @@
+import app/db
 import gleam/erlang/process
 import gleam/result.{try}
 import glenvy/dotenv
@@ -15,12 +16,15 @@ pub fn main() {
   use port <- try(env.get_int("PORT"))
   use secret_key <- try(env.get_string("SECRET_KEY"))
 
-  // Iniciating a process to configure INFO level logs for the Wisp logger.  
-  wisp.configure_logger()
+  // Getting the database connection pool
+  let assert Ok(db) = db.connect()
 
   // Trying to start the webserver on given PORT
   let assert Ok(_) =
-    wisp.mist_handler(router.handle_request, secret_key)
+    wisp.mist_handler(
+      fn(request) { router.handle_request(request, db) },
+      secret_key,
+    )
     |> mist.new
     |> mist.port(port)
     |> mist.start_http
